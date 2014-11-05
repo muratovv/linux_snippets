@@ -2,7 +2,7 @@
 __author__ = 'flire'
 
 from Xlib import X, XK, display, protocol, ext
-import tkinter
+from gi.repository import Gtk
 import time
 if __name__ == "__main__":
     displ = display.Display()
@@ -10,12 +10,9 @@ if __name__ == "__main__":
     focus = focus_request.focus
     revert_to = focus_request.revert_to
 
-    root = tkinter.Tk()
+    root = Gtk.Window()
 
-    root.title("Create a window")
-    root.geometry("200x200")
-
-    def callback():
+    def callback(widget, event):
         keysym = XK.string_to_keysym('A')
         keycode = displ.keysym_to_keycode(keysym)
         # ext.xtest.fake_input(displ, X.KeyPress, keycode)
@@ -34,9 +31,10 @@ if __name__ == "__main__":
         )
         focus.send_event(ev)
         displ.sync()
-        root.destroy()
+        Gtk.main_quit(widget, event)
 
-    root.protocol("WM_DELETE_WINDOW", callback)
-    root.mainloop()
+    root.connect("delete-event", callback)
+    root.show_all()
+    Gtk.main()
 
 
