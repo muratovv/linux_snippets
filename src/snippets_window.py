@@ -2,6 +2,7 @@
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from src.compliter import AutoSub
 
 
 class SnippetsWindow(Gtk.Window):
@@ -27,6 +28,8 @@ class SnippetsWindow(Gtk.Window):
         self.box.pack_start(self.entry, True, True, 0)
         self.box.pack_start(self.combo_box, True, True, 0)
 
+        self.asb = AutoSub("snippets")
+
     def on_text_changed(self, entry):
         # TODO send request, update model
         text = entry.get_text()
@@ -34,8 +37,9 @@ class SnippetsWindow(Gtk.Window):
         model = self.combo_box.get_model()
 
         model.clear()
-        model.append([text])
-        model.append([2 * text])
+
+        for s in self.asb.fieldCange_evnt(text):
+            model.append([s['label']])
 
         self.combo_box.set_model(model)
         self.combo_box.show()
@@ -55,7 +59,7 @@ class SnippetsWindow(Gtk.Window):
 
         if active != -1:
             # TODO send result
-            self.text = combobox.get_model()[active][0]
+            self.text = self.asb.substitution_evnt(combobox.get_model()[active][0])
 
 
 
