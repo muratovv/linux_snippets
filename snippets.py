@@ -30,7 +30,7 @@ class main_window():
             self.wind = wnd.SnippetsWindow()
             self.wind.connect("delete-event", self.callback)
             self.wind.show_all()
-            self.wind.present()
+            self.wind.present_with_time(int(time.time()))
             self.wind.set_keep_above(True)
             Gtk.main()
 
