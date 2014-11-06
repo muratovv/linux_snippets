@@ -3,6 +3,7 @@ __author__ = 'muratov'
 
 import json
 
+
 class SnippetParser:
     def __init__(self, path):
         self.loadSnippetList(path)
@@ -31,6 +32,18 @@ class SnippetParser:
             return False
         self.saveSnippetList()
         return True
+
+    def checkCorrect(self, obj):
+        for item in self.snippets:
+            if type(getattr(item, "label")) == str:
+                if type(getattr(item, "description")) == str:
+                    if type(getattr(item, "snippetText")) == list:
+                        for text_item in item["snippetText"]:
+                            if type(text_item) == str:
+                                continue
+                            elif type(text_item) == dict:
+                                pass
+
 
 
 if __name__ == '__main__':
