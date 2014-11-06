@@ -1,0 +1,33 @@
+[
+	{
+	    "label": "python",
+	    "description": "Мишу в копию",
+	    "snippetText": [
+	        "Python home work ",
+	        {
+	            "type": "%(si)",
+	            "description": "Фамилия"
+	        },
+	        "task0",
+	        {
+	            "type": "%(d)",
+	            "description": "Номер"
+	        }
+	    ]
+	},
+	{
+        "label": "knop",
+        "description": "",
+        "snippetText": [
+            {
+                "type": "%(si si)",
+                "description": "Имя Фамилия"
+            },
+            "домашнее задание DM-MAU",
+            {
+                "type": "%(dd.dd.dddd)",
+                "description": "Дата, когда задано"
+            }
+        ]
+    }
+]
