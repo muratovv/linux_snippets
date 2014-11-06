@@ -16,13 +16,25 @@ class SnippetsWindow(Gtk.Window):
         self.entry.connect("key-press-event", self.on_key_pressed)
         self.entry.connect("key-release-event", self.on_key_released)
 
-        self.combo_box = Gtk.ComboBox()
+        model = Gtk.ListStore(str)
+
+        self.combo_box = Gtk.ComboBox.new_with_model_and_entry(model)
+        self.combo_box.set_entry_text_column(0)
 
         self.box.pack_start(self.entry, True, True, 0)
         self.box.pack_start(self.combo_box, True, True, 0)
 
     def on_text_changed(self, entry):
-        print(self.entry.get_text())
+        text = entry.get_text()
+
+        model = self.combo_box.get_model()
+
+        model.clear()
+        model.append([text])
+        model.append([2 * text])
+
+        self.combo_box.set_model(model)
+        self.combo_box.show()
 
     def on_key_pressed(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:
