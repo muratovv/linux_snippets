@@ -8,6 +8,8 @@ class SnippetsWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Snippets")
 
+        self.text = ""
+
         self.box = Gtk.VBox(spacing=5)
         self.add(self.box)
 
@@ -53,15 +55,17 @@ class SnippetsWindow(Gtk.Window):
 
         if active != -1:
             # TODO send result
-            print(combobox.get_model()[active][0])
+            self.text = combobox.get_model()[active][0]
 
 
-def run():
-    win = SnippetsWindow()
-    win.connect("delete-event", Gtk.main_quit)
-    win.show_all()
-    Gtk.main()
 
-
-if __name__ == '__main__':
-    run()
+# def run(callback):
+#     win = SnippetsWindow()
+#     win.connect("delete-event", Gtk.main_quit)
+#     win.connect("delete-event", callback)
+#     win.show_all()
+#     Gtk.main()
+#     return win
+#
+# if __name__ == '__main__':
+#     run()
