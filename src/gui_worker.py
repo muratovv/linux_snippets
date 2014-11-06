@@ -6,25 +6,26 @@ from gi.repository import Gdk
 
 
 class Handler:
-	counter = 0
+    counter = 0
 
-	def searchBoxChanged(self, sBox):
-		print(sBox.get_text())
-
-
-	def deleteMain(self, *args):
-		Gtk.main_quit(*args)
+    def searchBoxChanged(self, sBox):
+        print(sBox.get_text())
 
 
-	def keyPressEvnt(self, sBox, event):
-		"""
-		Умеет перехватывать клик по таб
-		:param sBox:
-		:param event:
-		:return:
-		"""
-		keyname = Gdk.keyval_name(event.keyval)
-		print("Key %s (%d) was pressed" % (keyname, event.keyval))
+    def deleteMain(self, *args):
+        Gtk.main_quit(*args)
+
+
+    def keyPressEvnt(self, sBox, event):
+        """
+        Умеет перехватывать клик по таб
+        :param sBox:
+        :param event:
+        :return:
+        """
+        keyname = Gdk.keyval_name(event.keyval)
+        print("Key %s (%d) was pressed" % (keyname, event.keyval))
+
 
 builder = Gtk.Builder()
 builder.add_from_file("gui_glade_2.glade")
