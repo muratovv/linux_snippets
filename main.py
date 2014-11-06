@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 
 
 class SnippetsWindow(Gtk.Window):
@@ -12,6 +13,8 @@ class SnippetsWindow(Gtk.Window):
 
         self.entry = Gtk.Entry()
         self.entry.connect("changed", self.on_text_changed)
+        self.entry.connect("key-press-event", self.on_key_pressed)
+        self.entry.connect("key-release-event", self.on_key_released)
 
         self.combo_box = Gtk.ComboBox()
 
@@ -19,15 +22,17 @@ class SnippetsWindow(Gtk.Window):
         self.box.pack_start(self.combo_box, True, True, 0)
 
     def on_text_changed(self, entry):
-        text = self.entry.get_text()
+        print(self.entry.get_text())
 
-        if len(text) == 0:
-            self.combo_box.hide()
+    def on_key_pressed(self, entry, event, *args):
+        if event.keyval == Gdk.KEY_Tab:
+            # print("TAB_P")
+            return True
 
-        if len(text) != 0:
-            self.combo_box.show()
-
-        print(text)
+    def on_key_released(self, entry, event, *args):
+        if event.keyval == Gdk.KEY_Tab:
+            # print("TAB_R")
+            return True
 
 
 win = SnippetsWindow()
