@@ -3,11 +3,15 @@ __author__ = 'muratov'
 
 import json
 
+from src.Exeptions import ParseExeption
+
 
 class SnippetParser:
     def __init__(self, path):
         self.loadSnippetList(path)
         self.defaultPath = path
+        for obj in self.snippets:
+            self.checkCorrect(obj)
 
     def loadSnippetList(self, path):
         self.snippets = json.load(open(path, "r"))
@@ -35,15 +39,26 @@ class SnippetParser:
 
     def checkCorrect(self, obj):
         for item in self.snippets:
-            if type(getattr(item, "label")) == str:
-                if type(getattr(item, "description")) == str:
-                    if type(getattr(item, "snippetText")) == list:
+            if type(item["label"]) == str:
+                if type(item["description"]) == str:
+                    if type(item["snippetText"]) == list:
                         for text_item in item["snippetText"]:
                             if type(text_item) == str:
                                 continue
                             elif type(text_item) == dict:
-                                pass
-
+                                if type(text_item["type"]) == str and \
+                                                        type(text_item["description"]) == str:
+                                    continue
+                                else:
+                                    raise ParseExeption()
+                            else:
+                                raise ParseExeption()
+                    else:
+                        raise ParseExeption()
+                else:
+                    raise ParseExeption()
+            else:
+                raise ParseExeption()
 
 
 if __name__ == '__main__':

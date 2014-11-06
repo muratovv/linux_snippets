@@ -3,7 +3,6 @@ __author__ = 'muratov'
 
 from src.snippetParser import SnippetParser
 
-
 class AutoSub:
     def __init__(self, snippet_path):
         self.parser = SnippetParser(snippet_path)
@@ -32,11 +31,11 @@ class AutoSub:
             return ""
 
     def getSubstitutionList(self):
-        l = []
+        l_ = []
         for snip in self.snippets:
             if snip["label"].startswith(self.fieldString):
-                l.append(snip)
-        return l
+                l_.append(snip)
+        return l_
 
     def createStringBySnippet(self, snippet):
         resultString = ""
