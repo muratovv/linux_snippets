@@ -68,13 +68,10 @@ class SnippetsWindow(Gtk.Window):
             model.append([snippet['label'], snippet['description']])
 
         self.completion.set_model(model)
-        self.update_result(text)
+        self.result = entry.get_text()
 
     def get_suggested_snippets(self, text):
         return self.auto_sub.fieldCange_evnt(text)
-
-    def update_result(self, text):
-        self.result = self.auto_sub.substitution_evnt(text)
 
     def on_tab_pressed(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:
