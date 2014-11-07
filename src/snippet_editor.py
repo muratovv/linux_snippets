@@ -111,6 +111,7 @@ class EditorWindow(Gtk.Window):
                 self.descentry.set_text(self.current_snippet["description"])
                 #self.textentry.set_text(self.current_snippet["snippetText"])
                 #ToDo: брать строчку из листа
+                self.message_box("HELLO!")
                 break
 
     def add_clicked(self, button):
@@ -121,5 +122,14 @@ class EditorWindow(Gtk.Window):
 
     def ok_clicked(self, button):
         print("Ok clicked")
+
+    def message_box(self, message):
+        dialogWindow = Gtk.MessageDialog(self,
+                          Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                          Gtk.MessageType.WARNING,
+                          Gtk.ButtonsType.OK,
+                          message)
+        dialogWindow.run()
+        dialogWindow.destroy()
 
 
