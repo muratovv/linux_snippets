@@ -4,6 +4,7 @@ __author__ = 'flire'
 from gi.repository import Gtk
 
 from src.snippetParser import SnippetParser
+from src.Exeptions import badUserSnippetExeption
 
 class EditorWindow(Gtk.Window):
     def __init__(self):
@@ -104,12 +105,32 @@ class EditorWindow(Gtk.Window):
             print("You selected", model[treeiter][0])
 
     def add_clicked(self, button):
-        print("Add clicked")
+        if self.labelentry.get_text() and self.textentry.get_text():
+            class A:
+                pass
+            event = A()
+            event.label = self.labelentry.get_text()
+            event.text = self.textentry.get_text()
+            event.description = self.descentry.get_text()
+
+            obj = None
+            try:
+                obj = self.parser.getObjFromString(event)
+                self.parser.addSnippet(obj)
+            except badUserSnippetExeption:
+                pass
+
+            self.labelentry.set_text("")
+            self.textentry.set_text("")
+            self.descentry.set_text("")
+            self.store.append([obj["label"]])
+        else:
+            pass
 
     def delete_clicked(self, button):
         print("Delete clicked")
 
     def ok_clicked(self, button):
         print("Ok clicked")
-
+=
 

@@ -27,7 +27,7 @@ class SnippetParser:
         if not obj in self.snippets:
             self.checkCorrect(obj)
             self.snippets.append(obj)
-            self.saveSnippetList()
+            # self.saveSnippetList()
 
     def deleteSnippet(self, label):
         for numSnip in range(len(self.snippets)):
@@ -99,3 +99,4 @@ if __name__ == '__main__':
     a.description = "my description"
     a.text = "#arg1#Fuuuuu #arg2#! 0#arg3#"
     print(sn.getObjFromString(a))
+    sn.saveSnippetList()
