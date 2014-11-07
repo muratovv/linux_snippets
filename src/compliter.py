@@ -46,8 +46,11 @@ class AutoSub:
                 if type(item) == str:
                     result += item
                 else:
-                    result += args[currentArgForAddition]
-                    currentArgForAddition += 1
+                    if currentArgForAddition > len(args):
+                        result += "#" + item["description"] + "#"
+                    else:
+                        result += args[currentArgForAddition]
+                        currentArgForAddition += 1
             return result
         else:
             return result
@@ -67,10 +70,18 @@ class AutoSub:
             resultString += " "
         return resultString
 
+class A:
+    pass
 
 if __name__ == '__main__':
     a = AutoSub("snippets")
     l = a.fieldCange_evnt("kno")
     print(l)
     ans = a.substitution_evnt("knop")
+    print(ans)
+    str_user = "knop Муратов 01.01.0001"
+    event = A()
+    event.string = str_user
+    event.snippet = a.snippets[1]
+    ans = a.parsedSubstitution_evnt(event)
     print(ans)
