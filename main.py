@@ -39,7 +39,7 @@ class Application():
 
         item = Gtk.MenuItem()
         item.set_label("Exit")
-        item.connect("activate", self.on_exit_activated)
+        item.connect("activate", Gtk.main_quit)
         item.show()
         self.menu.append(item)
 
@@ -101,11 +101,6 @@ class Application():
     def on_editor_activated(self, widget):
         self.editor.show_all()
         self.editor.present_with_time(int(time.time()))
-
-        return True
-
-    def on_exit_activated(self, widget):
-        Gtk.main_quit()
 
         return True
 
