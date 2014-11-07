@@ -59,6 +59,7 @@ class Application():
         print("Hotkey pressed!")
 
         self.snippets.clear()
+        self.snippets.reload()
         self.snippets.show_all()
         self.snippets.present_with_time(int(time.time()))
         self.snippets.set_keep_above(True)

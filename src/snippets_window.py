@@ -21,6 +21,9 @@ class SnippetsWindow(Gtk.Window):
 
         self.callback = callback
 
+    def reload(self):
+        self.auto_sub = SnippetsEngine("src/snippets")
+
     def clear(self):
         self.entry.set_text("")
 
