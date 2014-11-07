@@ -7,10 +7,8 @@ from src.compliter import AutoSub
 
 
 class SnippetsWindow(Gtk.Window):
-    def __init__(self):
+    def __init__(self, callback=None):
         Gtk.Window.__init__(self, title="Snippets")
-
-        self.result = ""
 
         self.completion = self.calculate_completion(self.on_completion_selected)
 
@@ -20,6 +18,11 @@ class SnippetsWindow(Gtk.Window):
         self.add(self.entry)
 
         self.auto_sub = AutoSub("src/snippets")
+
+        self.callback = callback
+
+    def clear(self):
+        self.entry.set_text("")
 
     def calculate_completion(self, on_completion_selected):
         desc_cell = Gtk.CellRendererText()
@@ -51,7 +54,7 @@ class SnippetsWindow(Gtk.Window):
 
     def on_completion_selected(self, entry_completion, model, pos):
         selected = model[pos][0]
-        result = self.auto_sub.substitution_evnt(selected)
+        result = self.get_expanded_snippet(selected)
 
         self.entry.set_text(result)
 
@@ -62,6 +65,9 @@ class SnippetsWindow(Gtk.Window):
 
         return True
 
+    def get_expanded_snippet(self, text):
+        return self.auto_sub.substitution_evnt(text)
+
     def on_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
         text = entry.get_text()
@@ -70,7 +76,6 @@ class SnippetsWindow(Gtk.Window):
             model.append([snippet['label'], snippet['description']])
 
         self.completion.set_model(model)
-        self.result = self.auto_sub.parsedSubstitution_evnt(entry.get_text())
 
         return True
 
@@ -93,9 +98,13 @@ class SnippetsWindow(Gtk.Window):
             return True
 
     def on_activated(self, entry, *args):
-        print("AC")
+        if self.callback is not None:
+            self.callback(self.convert_snippet_to_result(entry.get_text()))
 
         return True
+
+    def convert_snippet_to_result(self, text):
+        return self.auto_sub.parsedSubstitution_evnt(text)
 
 
 if __name__ == '__main__':
