@@ -112,9 +112,7 @@ class EditorWindow(Gtk.Window):
                 self.current_snippet = snippet
                 self.labelentry.set_text(self.current_snippet["label"])
                 self.descentry.set_text(self.current_snippet["description"])
-                #self.textentry.set_text(self.current_snippet["snippetText"])
-                #ToDo: брать строчку из листа
-                self.message_box("HELLO!")
+                self.textentry.set_text(self.parser.getSnippetTextBySnippet(self.current_snippet))
                 break
 
     def add_clicked(self, button):
