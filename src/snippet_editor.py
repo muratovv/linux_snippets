@@ -132,5 +132,3 @@ class EditorWindow(Gtk.Window):
 
     def ok_clicked(self, button):
         print("Ok clicked")
-=
-
