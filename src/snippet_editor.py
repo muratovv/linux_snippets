@@ -1,4 +1,98 @@
 #! /usr/bin/env python3
+
+from gi.repository import Gtk
+
+from src.snippetParser import SnippetParser
+
+
+class EditorWindow(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Editor")
+
+        self.set_resizable(False)
+
+        grid = Gtk.Grid()
+        grid.set_border_width(5)
+        grid.set_row_spacing(5)
+        grid.set_column_spacing(5)
+        self.add(grid)
+
+        self.snippets = self.load_snippets()
+
+        model = Gtk.ListStore(str)
+
+        for snippet in self.snippets:
+            model.append([snippet['label']])
+
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn("Label", renderer, text=0)
+
+        self.labels = Gtk.TreeView(model)
+        self.labels.append_column(column)
+
+        select = self.labels.get_selection()
+        select.connect("changed", self.on_label_selection)
+
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(self.labels)
+
+        grid.attach(scroll, 0, 0, 2, 6)
+
+        self.label_entry = Gtk.Entry()
+        self.desc_entry = Gtk.Entry()
+        self.text_entry = Gtk.Entry()
+
+        self.label_entry.set_sensitive(False)
+
+        grid.attach(Gtk.Label("Label"), 2, 0, 1, 1)
+        grid.attach(self.label_entry, 2, 1, 1, 1)
+
+        grid.attach(Gtk.Label("Description"), 2, 2, 1, 1)
+        grid.attach(self.desc_entry, 2, 3, 1, 1)
+
+        grid.attach(Gtk.Label("Text"), 2, 4, 1, 1)
+        grid.attach(self.text_entry, 2, 5, 1, 1)
+
+        add_button = Gtk.Button("Add")
+        delete_button = Gtk.Button("Delete")
+        save_button = Gtk.Button("Save")
+
+        add_button.connect("clicked", self.on_add_clicked)
+        delete_button.connect("clicked", self.on_delete_clicked)
+        save_button.connect("clicked", self.on_save_clicked)
+
+        grid.attach(add_button, 0, 7, 1, 1)
+        grid.attach(delete_button, 1, 7, 1, 1)
+        grid.attach(save_button, 2, 7, 1, 1)
+
+    def reload_snippets(self):
+        self.snippets = self.load_snippets()
+
+    def load_snippets(self):
+        return SnippetParser("src/snippets").snippets
+
+    def on_add_clicked(self, button):
+        print("add")
+
+        return True
+
+    def on_delete_clicked(self, button):
+        print("delete")
+
+        return True
+
+    def on_save_clicked(self, button):
+        print("save")
+
+        return True
+
+    def on_label_selection(self, selection):
+        print("selection")
+
+        return True
+
+
+"""
 __author__ = 'flire'
 
 from gi.repository import Gtk
@@ -167,5 +261,5 @@ class EditorWindow(Gtk.Window):
                           message)
         dialogWindow.run()
         dialogWindow.destroy()
-
+"""
 
