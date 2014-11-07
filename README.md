@@ -15,7 +15,7 @@ For run need:
     xclip
     pyperclip
     libkeybinder-3.0.0
-    gi1.2-keybinder-3.0
+    gir1.2-keybinder-3.0
     
 
 Major bugs
