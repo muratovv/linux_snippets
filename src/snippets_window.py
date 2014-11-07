@@ -10,30 +10,55 @@ class SnippetsWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="Snippets")
 
-        self.text = ""
+        self.result = ""
 
-        self.completion = Gtk.EntryCompletion()
-        self.completion.set_model(None)
-        self.completion.set_text_column(0)
+        self.completion = self.calculate_completion()
 
-        self.entry = Gtk.Entry()
-        self.entry.set_completion(self.completion)
-
-        self.entry.connect("changed", self.on_text_changed)
-        # self.entry.connect("key-press-event", self.on_tab_pressed)
-        # self.entry.connect("key-release-event", self.on_tab_released)
+        self.entry = self.calculate_entry(self.completion, self.on_text_changed)
 
         self.add(self.entry)
 
         self.auto_sub = AutoSub("src/snippets")
 
+    def calculate_completion(self):
+        desc_cell = Gtk.CellRendererText()
+
+        completion = Gtk.EntryCompletion()
+
+        completion.set_model(Gtk.ListStore(str, str))
+        completion.set_text_column(0)
+
+        completion.pack_start(desc_cell, True)
+        completion.add_attribute(desc_cell, 'text', 1)
+
+        return completion
+
+    def calculate_entry(self, completion, on_text_changed):
+        entry = Gtk.Entry()
+
+        entry.set_completion(completion)
+
+        entry.connect("changed", on_text_changed)
+        # entry.connect("key-press-event", self.on_tab_pressed)
+        # entry.connect("key-release-event", self.on_tab_released)
+
+        return entry
+
     def on_text_changed(self, entry):
-        suggests = Gtk.ListStore(str)
+        model = Gtk.ListStore(str, str)
+        text = entry.get_text()
 
-        for suggest in self.auto_sub.fieldCange_evnt(entry.get_text()):
-            suggests.append([(suggest['label'])])
+        for snippet in self.get_suggested_snippets(text):
+            model.append([snippet['label'], snippet['description']])
 
-        self.completion.set_model(suggests)
+        self.completion.set_model(model)
+        self.update_result(text)
+
+    def get_suggested_snippets(self, text):
+        return self.auto_sub.fieldCange_evnt(text)
+
+    def update_result(self, text):
+        self.result = self.auto_sub.substitution_evnt(text)
 
     def on_tab_pressed(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:

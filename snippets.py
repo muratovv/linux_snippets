@@ -1,12 +1,15 @@
 #! /usr/bin/env python3
 __author__ = 'flire'
 
-from Xlib import X, XK, display, protocol, ext
+import time
+
+from Xlib import X, XK, display, protocol
 from gi.repository import Gtk
 import pyperclip
-import time
 from keybinder.keybinder_gtk import KeybinderGtk
+
 import src.snippets_window as wnd
+
 
 class main_window():
     def __init__(self):
@@ -41,7 +44,7 @@ class main_window():
     def callback(self, window, event):
         Gtk.main_quit()
         self.wind = None
-        pyperclip.copy(window.text)
+        pyperclip.copy(window.result)
         keysym = XK.string_to_keysym('V')
         keycode = self.display.keysym_to_keycode(keysym)
         # ext.xtest.fake_input(displ, X.KeyPress, keycode)
