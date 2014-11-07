@@ -39,6 +39,15 @@ class SnippetParser:
         self.saveSnippetList()
         return True
 
+    def getSnippetTextBySnippet(self, snippet):
+        result = ""
+        for part in snippet["snippetText"]:
+            if type(part) is dict:
+               result+='#'+part["description"]+"#"
+            else:
+                result+=str(part)
+        return result
+
     def getObjFromString(self, obj_string):
         """
         вернет объект сниппет
