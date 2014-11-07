@@ -11,7 +11,6 @@ import src.snippets_window as wnd
 
 class main_window():
     def __init__(self):
-        Gdk.threads_init()
         self.display = display.Display()
 
         Keybinder.init()
