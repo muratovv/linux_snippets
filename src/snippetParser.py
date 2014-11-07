@@ -46,11 +46,7 @@ class SnippetParser:
                             if type(text_item) == str:
                                 continue
                             elif type(text_item) == dict:
-                                if type(text_item["type"]) == str and \
-                                                        type(text_item["description"]) == str:
-                                    continue
-                                else:
-                                    raise ParseExeption()
+                                continue
                             else:
                                 raise ParseExeption()
                     else:
