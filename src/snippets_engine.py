@@ -31,11 +31,11 @@ class SnippetsEngine:
             if type(item) == dict:
                 result += "#" + item["description"] + "# "
 
-        return result
+        return result.rstrip()
 
     def convert_snippet_to_result(self, snippet):
         result = ""
-        args = snippet.split(" ")
+        args = snippet.strip().split(" ")
 
         for snippet in self.snippets:
             if snippet["label"] == args[0]:
@@ -45,7 +45,7 @@ class SnippetsEngine:
                     if type(item) == str:
                         result += item
                     else:
-                        if arg_pos > len(args):
+                        if arg_pos >= len(args):
                             result += "#" + item["description"] + "#"
                         else:
                             result += args[arg_pos]
@@ -62,4 +62,6 @@ if __name__ == '__main__':
 
     print(engine.get_expanded_label("knop"))
 
-    print(engine.convert_snippet_to_result("knop Муратов 01.01.0001"))
+    print(engine.convert_snippet_to_result("knop Муратов "))
+
+    print(engine.convert_snippet_to_result("knop Муратов 01.01.0001 "))
