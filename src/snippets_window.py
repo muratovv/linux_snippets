@@ -3,7 +3,7 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from src.compliter import AutoSub
+from src.snippets_engine import SnippetsEngine
 
 
 class SnippetsWindow(Gtk.Window):
@@ -17,9 +17,12 @@ class SnippetsWindow(Gtk.Window):
 
         self.add(self.entry)
 
-        self.auto_sub = AutoSub("src/snippets")
+        self.auto_sub = SnippetsEngine("src/snippets")
 
         self.callback = callback
+
+    def reload(self):
+        self.auto_sub = SnippetsEngine("src/snippets")
 
     def clear(self):
         self.entry.set_text("")
@@ -53,34 +56,28 @@ class SnippetsWindow(Gtk.Window):
         return entry
 
     def on_completion_selected(self, entry_completion, model, pos):
-        selected = model[pos][0]
-        result = self.get_expanded_snippet(selected)
+        label = model[pos][0]
+        expanded_label = self.auto_sub.get_expanded_label(label)
 
-        self.entry.set_text(result)
+        self.entry.set_text(expanded_label)
 
-        l = result.find('#')
+        l = expanded_label.find('#')
 
         if l != -1:
-            self.entry.select_region(l, result.find('#', l + 1) + 1)
+            self.entry.select_region(l, expanded_label.find('#', l + 1) + 1)
 
         return True
-
-    def get_expanded_snippet(self, text):
-        return self.auto_sub.substitution_evnt(text)
 
     def on_entry_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
         text = entry.get_text()
 
-        for snippet in self.get_suggested_snippets(text):
+        for snippet in self.auto_sub.get_suggested_snippets(text):
             model.append([snippet['label'], snippet['description']])
 
         self.completion.set_model(model)
 
         return True
-
-    def get_suggested_snippets(self, text):
-        return self.auto_sub.fieldCange_evnt(text)
 
     def on_entry_tab_pressed(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:
@@ -99,12 +96,11 @@ class SnippetsWindow(Gtk.Window):
 
     def on_entry_activated(self, entry, *args):
         if self.callback is not None:
-            self.callback(self.convert_snippet_to_result(entry.get_text()))
+            self.callback(
+                self.auto_sub.convert_snippet_to_result(entry.get_text())
+            )
 
         return True
-
-    def convert_snippet_to_result(self, text):
-        return self.auto_sub.parsedSubstitution_evnt(text)
 
 
 if __name__ == '__main__':
