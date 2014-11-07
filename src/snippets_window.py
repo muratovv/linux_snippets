@@ -12,9 +12,10 @@ class SnippetsWindow(Gtk.Window):
 
         self.result = ""
 
-        self.completion = self.calculate_completion(self.on_completion_activated)
+        self.completion = self.calculate_completion(self.on_completion_selected)
 
-        self.entry = self.calculate_entry(self.completion, self.on_text_changed)
+        self.entry = self.calculate_entry(self.completion, self.on_text_changed, self.on_tab_pressed,
+                                          self.on_tab_released, self.on_activated)
 
         self.add(self.entry)
 
@@ -35,19 +36,20 @@ class SnippetsWindow(Gtk.Window):
 
         return completion
 
-    def calculate_entry(self, completion, on_text_changed):
+    def calculate_entry(self, completion, on_text_changed, on_tab_pressed, on_tab_released, on_activated):
         entry = Gtk.Entry()
 
         entry.set_completion(completion)
         entry.set_width_chars(75)
 
         entry.connect("changed", on_text_changed)
-        entry.connect("key-press-event", self.on_tab_pressed)
-        entry.connect("key-release-event", self.on_tab_released)
+        entry.connect("key-press-event", on_tab_pressed)
+        entry.connect("key-release-event", on_tab_released)
+        entry.connect("activate", on_activated)
 
         return entry
 
-    def on_completion_activated(self, entry_completion, model, pos):
+    def on_completion_selected(self, entry_completion, model, pos):
         selected = model[pos][0]
         result = self.auto_sub.substitution_evnt(selected)
 
@@ -68,7 +70,9 @@ class SnippetsWindow(Gtk.Window):
             model.append([snippet['label'], snippet['description']])
 
         self.completion.set_model(model)
-        self.result = entry.get_text()
+        self.result = self.auto_sub.parsedSubstitution_evnt(entry.get_text())
+
+        return True
 
     def get_suggested_snippets(self, text):
         return self.auto_sub.fieldCange_evnt(text)
@@ -87,6 +91,12 @@ class SnippetsWindow(Gtk.Window):
                 entry.select_region(l, text.find('#', l + 1) + 1)
 
             return True
+
+    def on_activated(self, entry, *args):
+        print("AC")
+
+        return True
+
 
 if __name__ == '__main__':
     window = SnippetsWindow()
