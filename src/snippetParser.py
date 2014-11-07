@@ -10,11 +10,12 @@ class SnippetParser:
     def __init__(self, path):
         self.loadSnippetList(path)
         self.defaultPath = path
-        for obj in self.snippets:
-            self.checkCorrect(obj)
+
 
     def loadSnippetList(self, path):
         self.snippets = json.load(open(path, "r"))
+        for obj in self.snippets:
+            self.checkCorrect(obj)
 
     def saveSnippetList(self, path=""):
         if path == "":
@@ -24,6 +25,7 @@ class SnippetParser:
 
     def addSnippet(self, obj):
         if not obj in self.snippets:
+            self.checkCorrect(obj)
             self.snippets.append(obj)
             self.saveSnippetList()
 
