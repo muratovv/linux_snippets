@@ -31,6 +31,7 @@ class EditorWindow(Gtk.Window):
         self.store = Gtk.ListStore(str)
 
         self.current_snippet = None
+        self.current_snippet_treeiter = None
 
         for snip in self.snippets:
             self.store.append([snip["label"]])
@@ -105,6 +106,7 @@ class EditorWindow(Gtk.Window):
         model, treeiter = selection.get_selected()
         if treeiter != None:
             label = model[treeiter][0]
+            self.current_snippet_treeiter = treeiter
         for snippet in self.snippets:
             if snippet["label"]==label:
                 self.current_snippet = snippet
@@ -130,17 +132,25 @@ class EditorWindow(Gtk.Window):
                 self.parser.addSnippet(obj)
                 self.parser.saveSnippetList("src/snippets")
             except Exception:
-                pass
+                self.message_box("problems with addition")
 
             self.labelentry.set_text("")
             self.textentry.set_text("")
             self.descentry.set_text("")
             self.store.append([obj["label"]])
         else:
-            pass
+            self.message_box("bad snippet")
 
     def delete_clicked(self, button):
-        print("Delete clicked")
+        for_delete = self.current_snippet["label"]
+        answ = self.parser.deleteSnippet(for_delete)
+        if answ:
+            self.parser.saveSnippetList("src/snippets")
+            self.store.remove(self.current_snippet_treeiter)
+            self.current_snippet = None
+            self.current_snippet_treeiter = None
+        else:
+            self.message_box("label not found")
 
     def ok_clicked(self, button):
         print("Ok clicked")
