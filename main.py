@@ -13,7 +13,7 @@ import src.snippets_window as sn_w
 import src.snippet_editor as sn_e
 
 
-class main_window():
+class Application():
     def __init__(self):
         self.display = display.Display()
 
@@ -23,7 +23,8 @@ class main_window():
         self.status_icon = appindicator.Indicator.new(
             "linux-snippets",
             "onboard-mono",
-            appindicator.IndicatorCategory.APPLICATION_STATUS)
+            appindicator.IndicatorCategory.APPLICATION_STATUS
+        )
 
         self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.status_icon.set_attention_icon("indicator-messages-new")
@@ -32,30 +33,29 @@ class main_window():
 
         item = Gtk.MenuItem()
         item.set_label("Editor")
-        item.connect("activate", self.on_editor_activated, '')
+        item.connect("activate", self.on_editor_activated)
         item.show()
         self.menu.append(item)
 
         item = Gtk.MenuItem()
         item.set_label("Exit")
-        item.connect("activate", self.on_exit_activated, '')
+        item.connect("activate", self.on_exit_activated)
         item.show()
         self.menu.append(item)
 
         self.status_icon.set_menu(self.menu)
 
         self.editor = sn_e.EditorWindow()
-        self.editor.connect("delete-event", self.on_editor_deleted)
+        self.editor.connect("delete-event", self.on_window_deleted)
 
         self.snippets = sn_w.SnippetsWindow(self.on_snippets_completed)
-        # self.snippets.connect("delete-event", self.callback)
+        self.snippets.connect("delete-event", self.on_window_deleted)
 
     def on_hotkey_activated(self, data):
         self.cb_cache = pyperclip.paste()
         focus_request = self.display.get_input_focus()
         self.focus = focus_request.focus
 
-        # revert_to = focus_request.revert_to
         print("Hotkey pressed!")
 
         self.snippets.clear()
@@ -63,14 +63,15 @@ class main_window():
         self.snippets.present_with_time(int(time.time()))
         self.snippets.set_keep_above(True)
 
+        return True
+
     def on_snippets_completed(self, text):
         self.snippets.hide()
 
         pyperclip.copy(text)
+
         keysym = XK.string_to_keysym('V')
         keycode = self.display.keysym_to_keycode(keysym)
-        # ext.xtest.fake_input(displ, X.KeyPress, keycode)
-        # ext.xtest.fake_input (displ, X.KeyRelease, keycode)
         ev = protocol.event.KeyPress(
             time=int(time.time()),
             root=self.display.screen().root,
@@ -83,25 +84,32 @@ class main_window():
             state=X.ControlMask,
             detail=keycode
         )
+
         self.display.send_event(self.focus, ev)
         self.display.sync()
         time.sleep(1)
+
         pyperclip.copy(self.cb_cache)
 
         return True
 
-    def on_editor_activated(self, widget, data):
+    def on_window_deleted(self, window, event):
+        window.hide()
+
+        return True
+
+    def on_editor_activated(self, widget):
         self.editor.show_all()
         self.editor.present_with_time(int(time.time()))
 
-    def on_editor_deleted(self, window, event):
-        window.hide()
         return True
 
-    def on_exit_activated(self, widget, data):
+    def on_exit_activated(self, widget):
         Gtk.main_quit()
+
+        return True
 
 
 if __name__ == "__main__":
-    wind = main_window()
+    app = Application()
     Gtk.main()

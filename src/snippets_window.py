@@ -12,8 +12,8 @@ class SnippetsWindow(Gtk.Window):
 
         self.completion = self.calculate_completion(self.on_completion_selected)
 
-        self.entry = self.calculate_entry(self.completion, self.on_text_changed, self.on_tab_pressed,
-                                          self.on_tab_released, self.on_activated)
+        self.entry = self.calculate_entry(self.completion, self.on_entry_text_changed, self.on_entry_tab_pressed,
+                                          self.on_entry_tab_released, self.on_entry_activated)
 
         self.add(self.entry)
 
@@ -24,7 +24,7 @@ class SnippetsWindow(Gtk.Window):
     def clear(self):
         self.entry.set_text("")
 
-    def calculate_completion(self, on_completion_selected):
+    def calculate_completion(self, on_selected):
         desc_cell = Gtk.CellRendererText()
 
         completion = Gtk.EntryCompletion()
@@ -35,17 +35,17 @@ class SnippetsWindow(Gtk.Window):
         completion.pack_start(desc_cell, True)
         completion.add_attribute(desc_cell, 'text', 1)
 
-        completion.connect("match-selected", on_completion_selected)
+        completion.connect("match-selected", on_selected)
 
         return completion
 
-    def calculate_entry(self, completion, on_text_changed, on_tab_pressed, on_tab_released, on_activated):
+    def calculate_entry(self, completion, on_changed, on_tab_pressed, on_tab_released, on_activated):
         entry = Gtk.Entry()
 
         entry.set_completion(completion)
         entry.set_width_chars(75)
 
-        entry.connect("changed", on_text_changed)
+        entry.connect("changed", on_changed)
         entry.connect("key-press-event", on_tab_pressed)
         entry.connect("key-release-event", on_tab_released)
         entry.connect("activate", on_activated)
@@ -68,7 +68,7 @@ class SnippetsWindow(Gtk.Window):
     def get_expanded_snippet(self, text):
         return self.auto_sub.substitution_evnt(text)
 
-    def on_text_changed(self, entry):
+    def on_entry_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
         text = entry.get_text()
 
@@ -82,11 +82,11 @@ class SnippetsWindow(Gtk.Window):
     def get_suggested_snippets(self, text):
         return self.auto_sub.fieldCange_evnt(text)
 
-    def on_tab_pressed(self, entry, event, *args):
+    def on_entry_tab_pressed(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:
             return True
 
-    def on_tab_released(self, entry, event, *args):
+    def on_entry_tab_released(self, entry, event, *args):
         if event.keyval == Gdk.KEY_Tab:
             text = entry.get_text()
 
@@ -97,7 +97,7 @@ class SnippetsWindow(Gtk.Window):
 
             return True
 
-    def on_activated(self, entry, *args):
+    def on_entry_activated(self, entry, *args):
         if self.callback is not None:
             self.callback(self.convert_snippet_to_result(entry.get_text()))
 
