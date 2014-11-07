@@ -39,6 +39,15 @@ class SnippetParser:
         # self.saveSnippetList()
         return True
 
+    def modifySnippet(self, oldlabel, new_snippet):
+        for numSnip in range(len(self.snippets)):
+            if self.snippets[numSnip]["label"] == oldlabel:
+                self.snippets[numSnip] = new_snippet
+                break
+        else:
+            return False
+        return True
+
     def getSnippetTextBySnippet(self, snippet):
         result = ""
         for part in snippet["snippetText"]:
@@ -57,11 +66,11 @@ class SnippetParser:
             obj_string.description - description
         :return:
         """
-        obj = {"label": obj_string.label, "description": obj_string.description, "snippetText": []}
+        obj = {"label": obj_string["label"], "description": obj_string["description"], "snippetText": []}
         if obj["label"] == "" or obj["snippetText"] == "":
             raise badUserSnippetExeption()
         currentTextPart = 0
-        for part in obj_string.text.split("#"):
+        for part in obj_string["text"].split("#"):
             if currentTextPart % 2 == 0:
                 # text
                 if part != "":

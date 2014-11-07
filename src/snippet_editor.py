@@ -117,12 +117,10 @@ class EditorWindow(Gtk.Window):
 
     def add_clicked(self, button):
         if self.labelentry.get_text() and self.textentry.get_text():
-            class A:
-                pass
-            event = A()
-            event.label = self.labelentry.get_text()
-            event.text = self.textentry.get_text()
-            event.description = self.descentry.get_text()
+            event = {}
+            event["label"] = self.labelentry.get_text()
+            event["text"] = self.textentry.get_text()
+            event["description"] = self.descentry.get_text()
 
             obj = None
             try:
@@ -151,7 +149,15 @@ class EditorWindow(Gtk.Window):
             self.message_box("label not found")
 
     def ok_clicked(self, button):
-        print("Ok clicked")
+        event = {}
+        event["label"] = self.labelentry.get_text()
+        event["text"] = self.textentry.get_text()
+        event["description"] = self.descentry.get_text()
+        new_snippet = self.parser.getObjFromString(event)
+        self.parser.modifySnippet(self.current_snippet["label"], new_snippet)
+        self.store.set_value(self.current_snippet_treeiter, 0, new_snippet["label"])
+        self.current_snippet = new_snippet
+        self.parser.saveSnippetList("src/snippets")
 
     def message_box(self, message):
         dialogWindow = Gtk.MessageDialog(self,
