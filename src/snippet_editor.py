@@ -4,7 +4,7 @@ __author__ = 'flire'
 from gi.repository import Gtk
 
 from src.snippetParser import SnippetParser
-from src.Exeptions import badUserSnippetExeption
+
 
 class EditorWindow(Gtk.Window):
     def __init__(self):
@@ -35,7 +35,6 @@ class EditorWindow(Gtk.Window):
 
         for snip in self.snippets:
             self.store.append([snip["label"]])
-
 
         self.labels_list = Gtk.TreeView(self.store)
         select = self.labels_list.get_selection()
@@ -108,7 +107,7 @@ class EditorWindow(Gtk.Window):
             label = model[treeiter][0]
             self.current_snippet_treeiter = treeiter
         for snippet in self.snippets:
-            if snippet["label"]==label:
+            if snippet["label"] == label:
                 self.current_snippet = snippet
                 self.labelentry.set_text(self.current_snippet["label"])
                 self.descentry.set_text(self.current_snippet["description"])
@@ -119,6 +118,7 @@ class EditorWindow(Gtk.Window):
         if self.labelentry.get_text() and self.textentry.get_text():
             class A:
                 pass
+
             event = A()
             event.label = self.labelentry.get_text()
             event.text = self.textentry.get_text()
@@ -127,15 +127,14 @@ class EditorWindow(Gtk.Window):
             obj = None
             try:
                 obj = self.parser.getObjFromString(event)
+                for snip in self.snippets:
+                    if snip["label"] == obj["label"]:
+                        raise Exception("Не уникальненько")
                 self.parser.addSnippet(obj)
                 self.parser.saveSnippetList("src/snippets")
+                self.store.append([obj["label"]])
             except Exception:
                 self.message_box("problems with addition")
-
-            self.labelentry.set_text("")
-            self.textentry.set_text("")
-            self.descentry.set_text("")
-            self.store.append([obj["label"]])
         else:
             self.message_box("bad snippet")
 
@@ -155,10 +154,10 @@ class EditorWindow(Gtk.Window):
 
     def message_box(self, message):
         dialogWindow = Gtk.MessageDialog(self,
-                          Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                          Gtk.MessageType.WARNING,
-                          Gtk.ButtonsType.OK,
-                          message)
+                                         Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                         Gtk.MessageType.WARNING,
+                                         Gtk.ButtonsType.OK,
+                                         message)
         dialogWindow.run()
         dialogWindow.destroy()
 
