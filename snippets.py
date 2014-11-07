@@ -8,6 +8,7 @@ import pyperclip
 import time
 from gi.repository import Keybinder
 import src.snippets_window as wnd
+import src.snippet_editor as editor
 
 class main_window():
     def __init__(self):
@@ -15,7 +16,6 @@ class main_window():
 
         Keybinder.init()
         Keybinder.bind("<Ctrl>9", self.restore_callback)
-        # self.keybinder.start()
 
         self.statusicon = appindicator.Indicator.new (
             "linux-snippets",
@@ -27,6 +27,12 @@ class main_window():
         self.menu = Gtk.Menu()
 
         item = Gtk.MenuItem()
+        item.set_label("Editor")
+        item.connect("activate", self.load_editor, '')
+        item.show()
+        self.menu.append(item)
+
+        item = Gtk.MenuItem()
         item.set_label("Exit")
         item.connect("activate", self.quit, '')
         item.show()
@@ -34,34 +40,26 @@ class main_window():
 
         self.statusicon.set_menu(self.menu)
 
+        self.editor = editor.EditorWindow()
+        self.editor.connect("delete-event", self.editor_deletion)
+
         self.wind = wnd.SnippetsWindow()
         self.wind.connect("delete-event", self.callback)
 
     def restore_callback(self, data):
-        #self.keybinder.stop()
         self.cbcache = pyperclip.paste()
         focus_request = self.display.get_input_focus()
         self.focus = focus_request.focus
         revert_to = focus_request.revert_to
         print("Hotkey pressed!")
 
-        # if(self.wind == None):
-        #     self.wind = wnd.SnippetsWindow()
-        # #     self.wind.connect("delete-event", self.callback)
-        #     self.wind.show_all()
         self.wind.show_all()
         self.wind.present_with_time(int(time.time()))
         self.wind.set_keep_above(True)
-            #Gtk.main()
-
-        # self.keybinder = KeybinderGtk()
-        # self.keybinder.register("<Ctrl>9", self.restore_callback)
-        # self.keybinder.start()
 
     def callback(self, window, event):
-        # Gtk.main_quit()
         self.wind.hide()
-        pyperclip.copy(window.text)
+        pyperclip.copy(window.result)
         keysym = XK.string_to_keysym('V')
         keycode = self.display.keysym_to_keycode(keysym)
         # ext.xtest.fake_input(displ, X.KeyPress, keycode)
@@ -84,13 +82,17 @@ class main_window():
         pyperclip.copy(self.cbcache)
         return True
 
+    def load_editor(self, widget, data):
+        self.editor.show_all()
+        self.editor.present_with_time(int(time.time()))
+
+    def editor_deletion(self, window, event):
+        window.hide()
+        return True
+
     def quit(self, widget, data):
-        self.keybinder.stop()
         Gtk.main_quit()
 
 if __name__ == "__main__":
     wind = main_window()
     Gtk.main()
-    # while True:
-    #     time.sleep(0.1)
-    # Gtk.main_quit()
