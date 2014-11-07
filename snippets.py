@@ -2,45 +2,66 @@
 __author__ = 'flire'
 
 from Xlib import X, XK, display, protocol, ext
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk, GLib
+from gi.repository import AppIndicator3 as appindicator
 import pyperclip
 import time
-from keybinder.keybinder_gtk import KeybinderGtk
+from gi.repository import Keybinder
 import src.snippets_window as wnd
 
 class main_window():
     def __init__(self):
+        Gdk.threads_init()
         self.display = display.Display()
 
-        self.keybinder = KeybinderGtk()
-        self.keybinder.register("<Ctrl>9", self.restore_callback)
-        self.keybinder.start()
+        Keybinder.init()
+        Keybinder.bind("<Ctrl>9", self.restore_callback)
+        # self.keybinder.start()
 
-        self.wind = None
+        self.statusicon = appindicator.Indicator.new (
+            "linux-snippets",
+            "onboard-mono",
+            appindicator.IndicatorCategory.APPLICATION_STATUS)
+        self.statusicon.set_status (appindicator.IndicatorStatus.ACTIVE)
+        self.statusicon.set_attention_icon ("indicator-messages-new")
 
-    def restore_callback(self):
-        self.keybinder.stop()
+        self.menu = Gtk.Menu()
+
+        item = Gtk.MenuItem()
+        item.set_label("Exit")
+        item.connect("activate", self.quit, '')
+        item.show()
+        self.menu.append(item)
+
+        self.statusicon.set_menu(self.menu)
+
+        self.wind = wnd.SnippetsWindow()
+        self.wind.connect("delete-event", self.callback)
+
+    def restore_callback(self, data):
+        #self.keybinder.stop()
         self.cbcache = pyperclip.paste()
         focus_request = self.display.get_input_focus()
         self.focus = focus_request.focus
         revert_to = focus_request.revert_to
         print("Hotkey pressed!")
 
-        if(self.wind == None):
-            self.wind = wnd.SnippetsWindow()
-            self.wind.connect("delete-event", self.callback)
-            self.wind.show_all()
-            self.wind.present_with_time(int(time.time()))
-            self.wind.set_keep_above(True)
-            Gtk.main()
+        # if(self.wind == None):
+        #     self.wind = wnd.SnippetsWindow()
+        # #     self.wind.connect("delete-event", self.callback)
+        #     self.wind.show_all()
+        self.wind.show_all()
+        self.wind.present_with_time(int(time.time()))
+        self.wind.set_keep_above(True)
+            #Gtk.main()
 
-        self.keybinder = KeybinderGtk()
-        self.keybinder.register("<Ctrl>9", self.restore_callback)
-        self.keybinder.start()
+        # self.keybinder = KeybinderGtk()
+        # self.keybinder.register("<Ctrl>9", self.restore_callback)
+        # self.keybinder.start()
 
     def callback(self, window, event):
-        Gtk.main_quit()
-        self.wind = None
+        # Gtk.main_quit()
+        self.wind.hide()
         pyperclip.copy(window.text)
         keysym = XK.string_to_keysym('V')
         keycode = self.display.keysym_to_keycode(keysym)
@@ -62,8 +83,15 @@ class main_window():
         self.display.sync()
         time.sleep(1)
         pyperclip.copy(self.cbcache)
+        return True
+
+    def quit(self, widget, data):
+        self.keybinder.stop()
+        Gtk.main_quit()
 
 if __name__ == "__main__":
     wind = main_window()
-    while True:
-        time.sleep(0.1)
+    Gtk.main()
+    # while True:
+    #     time.sleep(0.1)
+    # Gtk.main_quit()
