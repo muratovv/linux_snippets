@@ -27,7 +27,7 @@ class SnippetParser:
         if not obj in self.snippets:
             self.checkCorrect(obj)
             self.snippets.append(obj)
-            self.saveSnippetList()
+            # self.saveSnippetList()
 
     def deleteSnippet(self, label):
         for numSnip in range(len(self.snippets)):
@@ -49,6 +49,8 @@ class SnippetParser:
         :return:
         """
         obj = {"label": obj_string.label, "description": obj_string.description, "snippetText": []}
+        if obj["label"] == "" or obj["snippetText"] == "":
+            raise badUserSnippetExeption()
         currentTextPart = 0
         for part in obj_string.text.split("#"):
             if currentTextPart % 2 == 0:
@@ -97,3 +99,4 @@ if __name__ == '__main__':
     a.description = "my description"
     a.text = "#arg1#Fuuuuu #arg2#! 0#arg3#"
     print(sn.getObjFromString(a))
+    sn.saveSnippetList()
