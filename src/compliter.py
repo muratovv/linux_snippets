@@ -49,7 +49,7 @@ class AutoSub:
                             result += "#" + item["description"] + "#"
                         else:
                             result += args[currentArgForAddition]
-                            currentArgForAddition += 1
+                    currentArgForAddition += 1
                 return result
 
     def getSubstitutionList(self):
