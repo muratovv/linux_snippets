@@ -3,12 +3,17 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from src.snippets_engine import SnippetsEngine
+from src.snippetParser import SnippetParser
+import src.snippets_engine as s_e
 
 
 class SnippetsWindow(Gtk.Window):
     def __init__(self, callback=None):
         Gtk.Window.__init__(self, title="Snippets")
+
+        self.snippets = SnippetParser("src/snippets").snippets
+
+        self.callback = callback
 
         self.completion = self.calculate_completion(self.on_completion_selected)
 
@@ -17,12 +22,8 @@ class SnippetsWindow(Gtk.Window):
 
         self.add(self.entry)
 
-        self.auto_sub = SnippetsEngine("src/snippets")
-
-        self.callback = callback
-
-    def reload(self):
-        self.auto_sub = SnippetsEngine("src/snippets")
+    def reload_snippets(self):
+        self.snippets = SnippetParser("src/snippets").snippets
 
     def clear(self):
         self.entry.set_text("")
@@ -57,14 +58,15 @@ class SnippetsWindow(Gtk.Window):
 
     def on_completion_selected(self, entry_completion, model, pos):
         label = model[pos][0]
-        expanded_label = self.auto_sub.get_expanded_label(label)
+        expanded_label = s_e.get_expanded_snippet_by_label(self.snippets, label)
 
         self.entry.set_text(expanded_label)
 
         l = expanded_label.find('#')
+        r = expanded_label.find('#', l + 1) + 1
 
-        if l != -1:
-            self.entry.select_region(l, expanded_label.find('#', l + 1) + 1)
+        if l != -1 and r != -1:
+            self.entry.select_region(l, r)
 
         return True
 
@@ -72,7 +74,7 @@ class SnippetsWindow(Gtk.Window):
         model = Gtk.ListStore(str, str)
         text = entry.get_text()
 
-        for snippet in self.auto_sub.get_suggested_snippets(text):
+        for snippet in s_e.get_suggested_snippets(self.snippets, text):
             model.append([snippet['label'], snippet['description']])
 
         self.completion.set_model(model)
@@ -97,7 +99,7 @@ class SnippetsWindow(Gtk.Window):
     def on_entry_activated(self, entry, *args):
         if self.callback is not None:
             self.callback(
-                self.auto_sub.convert_snippet_to_result(entry.get_text())
+                s_e.convert_expanded_snippet_to_result(self.snippets, entry.get_text())
             )
 
         return True

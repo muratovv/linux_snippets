@@ -5,7 +5,7 @@ import time
 
 from Xlib import X, XK, display, protocol
 from gi.repository import Gtk
-from gi.repository import AppIndicator3 as appindicator
+from gi.repository import AppIndicator3
 import pyperclip
 from gi.repository import Keybinder
 
@@ -20,30 +20,29 @@ class Application():
         Keybinder.init()
         Keybinder.bind("<Ctrl>9", self.on_hotkey_activated)
 
-        self.status_icon = appindicator.Indicator.new(
-            "linux-snippets",
-            "onboard-mono",
-            appindicator.IndicatorCategory.APPLICATION_STATUS
-        )
-
-        self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
-        self.status_icon.set_attention_icon("indicator-messages-new")
-
-        self.menu = Gtk.Menu()
+        menu = Gtk.Menu()
 
         item = Gtk.MenuItem()
         item.set_label("Editor")
         item.connect("activate", self.on_editor_activated)
         item.show()
-        self.menu.append(item)
+        menu.append(item)
 
         item = Gtk.MenuItem()
         item.set_label("Exit")
         item.connect("activate", Gtk.main_quit)
         item.show()
-        self.menu.append(item)
+        menu.append(item)
 
-        self.status_icon.set_menu(self.menu)
+        self.status_icon = AppIndicator3.Indicator.new(
+            "linux-snippets",
+            "onboard-mono",
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS
+        )
+
+        self.status_icon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self.status_icon.set_attention_icon("indicator-messages-new")
+        self.status_icon.set_menu(menu)
 
         self.editor = sn_e.EditorWindow()
         self.editor.connect("delete-event", self.on_window_deleted)
@@ -59,7 +58,7 @@ class Application():
         print("Hotkey pressed!")
 
         self.snippets.clear()
-        self.snippets.reload()
+        self.snippets.reload_snippets()
         self.snippets.show_all()
         self.snippets.present_with_time(int(time.time()))
         self.snippets.set_keep_above(True)

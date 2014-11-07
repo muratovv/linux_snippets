@@ -1,67 +1,51 @@
 #! /usr/bin/env python3
-__author__ = 'muratov'
-
-from src.snippetParser import SnippetParser
 
 
-class SnippetsEngine:
-    def __init__(self, snippets_path):
-        self.snippets = SnippetParser(snippets_path).snippets
+def get_suggested_snippets(snippets, label_prefix):
+    result = []
 
-    def get_suggested_snippets(self, text):
-        result = []
+    for snippet in snippets:
+        if snippet["label"].startswith(label_prefix):
+            result.append(snippet)
 
-        for snippet in self.snippets:
-            if snippet["label"].startswith(text):
-                result.append(snippet)
+    return result
 
-        return result
 
-    def get_expanded_label(self, label):
-        for snippet in self.snippets:
-            if snippet["label"] == label:
-                return self.get_expanded_snippet(snippet)
-        else:
-            return ""
+def get_expanded_snippet_by_label(snippets, label):
+    for snippet in snippets:
+        if snippet["label"] == label:
+            return get_expanded_snippet(snippet)
+    else:
+        return ""
 
-    def get_expanded_snippet(self, snippet):
-        result = snippet["label"] + " "
 
-        for item in snippet["snippetText"]:
-            if type(item) == dict:
-                result += "#" + item["description"] + "# "
+def get_expanded_snippet(snippet):
+    result = snippet["label"] + " "
 
-        return result.rstrip()
+    for item in snippet["snippetText"]:
+        if type(item) == dict:
+            result += "#" + item["description"] + "# "
 
-    def convert_snippet_to_result(self, snippet):
-        result = ""
-        args = snippet.strip().split(" ")
+    return result.rstrip()
 
-        for snippet in self.snippets:
-            if snippet["label"] == args[0]:
-                arg_pos = 1
 
-                for item in snippet["snippetText"]:
-                    if type(item) == str:
-                        result += item
+def convert_expanded_snippet_to_result(snippets, snippet):
+    result = ""
+    args = snippet.strip().split()
+
+    for snippet in snippets:
+        if snippet["label"] == args[0]:
+            arg_pos = 1
+
+            for item in snippet["snippetText"]:
+                if type(item) == str:
+                    result += item
+                else:
+                    if arg_pos >= len(args):
+                        result += "#" + item["description"] + "#"
                     else:
-                        if arg_pos >= len(args):
-                            result += "#" + item["description"] + "#"
-                        else:
-                            result += args[arg_pos]
+                        result += args[arg_pos]
 
-                        arg_pos += 1
+                    arg_pos += 1
 
-        return result
-
-
-if __name__ == '__main__':
-    engine = SnippetsEngine("snippets")
-
-    print(engine.get_suggested_snippets("kno"))
-
-    print(engine.get_expanded_label("knop"))
-
-    print(engine.convert_snippet_to_result("knop Муратов "))
-
-    print(engine.convert_snippet_to_result("knop Муратов 01.01.0001 "))
+    return result
