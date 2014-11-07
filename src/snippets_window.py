@@ -4,14 +4,14 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 
 from src.snippetParser import SnippetParser
-import src.snippets_engine as s_e
+import src.snippets_utils as s_e
 
 
 class SnippetsWindow(Gtk.Window):
     def __init__(self, callback=None):
         Gtk.Window.__init__(self, title="Snippets")
 
-        self.snippets = SnippetParser("src/snippets").snippets
+        self.snippets = self.load_snippets()
 
         self.callback = callback
 
@@ -23,10 +23,13 @@ class SnippetsWindow(Gtk.Window):
         self.add(self.entry)
 
     def reload_snippets(self):
-        self.snippets = SnippetParser("src/snippets").snippets
+        self.snippets = self.load_snippets()
 
     def clear(self):
         self.entry.set_text("")
+
+    def load_snippets(self):
+        return SnippetParser("src/snippets").snippets
 
     def calculate_completion(self, on_selected):
         desc_cell = Gtk.CellRendererText()
@@ -57,18 +60,20 @@ class SnippetsWindow(Gtk.Window):
         return entry
 
     def on_completion_selected(self, entry_completion, model, pos):
-        label = model[pos][0]
-        expanded_label = s_e.get_expanded_snippet_by_label(self.snippets, label)
-
-        self.entry.set_text(expanded_label)
-
-        l = expanded_label.find('#')
-        r = expanded_label.find('#', l + 1) + 1
-
-        if l != -1 and r != -1:
-            self.entry.select_region(l, r)
+        self.expand_label(model[pos][0])
 
         return True
+
+    def expand_label(self, label):
+        expanded_snippet = s_e.get_expanded_snippet_by_label(self.snippets, label)
+
+        self.entry.set_text(expanded_snippet)
+
+        l = expanded_snippet.find('#')
+
+        if l != -1:
+            r = expanded_snippet.find('#', l + 1) + 1
+            self.entry.select_region(l, r)
 
     def on_entry_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
@@ -92,7 +97,15 @@ class SnippetsWindow(Gtk.Window):
             l = text.find('#', entry.get_position())
 
             if l != -1:
-                entry.select_region(l, text.find('#', l + 1) + 1)
+                r = text.find('#', l + 1) + 1
+                entry.select_region(l, r)
+                return True
+
+            suggested_snippets = s_e.get_suggested_snippets(self.snippets, text)
+
+            if len(suggested_snippets) == 1:
+                self.expand_label(suggested_snippets[0]['label'])
+                return True
 
             return True
 
