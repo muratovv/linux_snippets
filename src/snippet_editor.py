@@ -117,7 +117,8 @@ class EditorWindow(Gtk.Window):
             try:
                 obj = self.parser.getObjFromString(event)
                 self.parser.addSnippet(obj)
-            except badUserSnippetExeption:
+                self.parser.saveSnippetList("src/snippets")
+            except Exception:
                 pass
 
             self.labelentry.set_text("")

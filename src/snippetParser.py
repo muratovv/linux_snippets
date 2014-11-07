@@ -36,7 +36,7 @@ class SnippetParser:
                 break
         else:
             return False
-        self.saveSnippetList()
+        # self.saveSnippetList()
         return True
 
     def getObjFromString(self, obj_string):
@@ -94,6 +94,7 @@ if __name__ == '__main__':
 
     class A:
         pass
+
     a = A()
     a.label = "label1"
     a.description = "my description"
