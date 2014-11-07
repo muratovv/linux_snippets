@@ -1,25 +1,22 @@
-linux_snippets
-==============
+# Linux-snippets
 
-Description 
-==============
-spbau devdeys 2014 autumn project 
+## Description 
 
-How to build
-==============
-For run need:
-  Python3.4
-  PyGtk+ 3
-  libs for python:
-    python-xlib
-    xclip
-    pyperclip
-    libkeybinder-3.0.0
-    gir1.2-keybinder-3.0
-    
+Application allows you to insert frequently used text by using simple snippet with parameters.
 
-Major bugs
-==============
+## Features
 
-Features
-==============
+* Snippet parameters
+* Snippet editor
+* Snippet auto-completing
+
+## Dependencies
+
+* Python3.4
+* PyGtk+ 3
+
+* python-xlib
+* xclip
+* pyperclip
+* libkeybinder-3.0.0
+* gir1.2-keybinder-3.0
