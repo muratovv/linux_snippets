@@ -70,10 +70,11 @@ class AutoSub:
             resultString += " "
         return resultString
 
-class A:
-    pass
 
 if __name__ == '__main__':
+    class A:
+        pass
+
     a = AutoSub("snippets")
     l = a.fieldCange_evnt("kno")
     print(l)
