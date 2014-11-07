@@ -49,6 +49,8 @@ class SnippetParser:
         :return:
         """
         obj = {"label": obj_string.label, "description": obj_string.description, "snippetText": []}
+        if obj["label"] == "" or obj["snippetText"] == "":
+            raise badUserSnippetExeption()
         currentTextPart = 0
         for part in obj_string.text.split("#"):
             if currentTextPart % 2 == 0:
