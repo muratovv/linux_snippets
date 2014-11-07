@@ -29,6 +29,8 @@ class EditorWindow(Gtk.Window):
 
         self.store = Gtk.ListStore(str)
 
+        self.current_snippet = None
+
         for snip in self.snippets:
             self.store.append([snip["label"]])
 
@@ -101,7 +103,15 @@ class EditorWindow(Gtk.Window):
     def on_tree_selection(self, selection):
         model, treeiter = selection.get_selected()
         if treeiter != None:
-            print("You selected", model[treeiter][0])
+            label = model[treeiter][0]
+        for snippet in self.snippets:
+            if snippet["label"]==label:
+                self.current_snippet = snippet
+                self.labelentry.set_text(self.current_snippet["label"])
+                self.descentry.set_text(self.current_snippet["description"])
+                #self.textentry.set_text(self.current_snippet["snippetText"])
+                #ToDo: брать строчку из листа
+                break
 
     def add_clicked(self, button):
         print("Add clicked")
