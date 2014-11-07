@@ -12,7 +12,7 @@ class SnippetsWindow(Gtk.Window):
 
         self.result = ""
 
-        self.completion = self.calculate_completion()
+        self.completion = self.calculate_completion(self.on_completion_activated)
 
         self.entry = self.calculate_entry(self.completion, self.on_text_changed)
 
@@ -20,7 +20,7 @@ class SnippetsWindow(Gtk.Window):
 
         self.auto_sub = AutoSub("src/snippets")
 
-    def calculate_completion(self):
+    def calculate_completion(self, on_completion_selected):
         desc_cell = Gtk.CellRendererText()
 
         completion = Gtk.EntryCompletion()
@@ -31,18 +31,28 @@ class SnippetsWindow(Gtk.Window):
         completion.pack_start(desc_cell, True)
         completion.add_attribute(desc_cell, 'text', 1)
 
+        completion.connect("match-selected", on_completion_selected)
+
         return completion
 
     def calculate_entry(self, completion, on_text_changed):
         entry = Gtk.Entry()
 
         entry.set_completion(completion)
+        entry.set_width_chars(75)
 
         entry.connect("changed", on_text_changed)
         # entry.connect("key-press-event", self.on_tab_pressed)
         # entry.connect("key-release-event", self.on_tab_released)
 
         return entry
+
+    def on_completion_activated(self, entry_completion, model, pos):
+        selected = model[pos][0]
+
+        self.entry.set_text(self.auto_sub.substitution_evnt(selected))
+
+        return True
 
     def on_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
