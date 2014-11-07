@@ -33,27 +33,24 @@ class AutoSub:
 
     def parsedSubstitution_evnt(self, event):
         """
-        :param event:
-            event.string строка вида <label> <arg1> <arg2>...<agrN>
-            event.snippet сниппет из которого будем доставать.
+        :param event:строка введенная пользователем
         :return:возращает сниппет для вывода
         """
         result = ""
-        args = event.string.split(" ")
-        if event.snippet["label"] == args[0]:
-            currentArgForAddition = 1
-            for item in event.snippet["snippetText"]:
-                if type(item) == str:
-                    result += item
-                else:
-                    if currentArgForAddition > len(args):
-                        result += "#" + item["description"] + "#"
+        args = event.split(" ")
+        for snip in self.snippets:
+            if snip["label"] == args[0]:
+                currentArgForAddition = 1
+                for item in snip["snippetText"]:
+                    if type(item) == str:
+                        result += item
                     else:
-                        result += args[currentArgForAddition]
-                        currentArgForAddition += 1
-            return result
-        else:
-            return result
+                        if currentArgForAddition > len(args):
+                            result += "#" + item["description"] + "#"
+                        else:
+                            result += args[currentArgForAddition]
+                            currentArgForAddition += 1
+                return result
 
     def getSubstitutionList(self):
         l_ = []
@@ -72,8 +69,6 @@ class AutoSub:
 
 
 if __name__ == '__main__':
-    class A:
-        pass
 
     a = AutoSub("snippets")
     l = a.fieldCange_evnt("kno")
@@ -81,8 +76,5 @@ if __name__ == '__main__':
     ans = a.substitution_evnt("knop")
     print(ans)
     str_user = "knop Муратов 01.01.0001"
-    event = A()
-    event.string = str_user
-    event.snippet = a.snippets[1]
-    ans = a.parsedSubstitution_evnt(event)
+    ans = a.parsedSubstitution_evnt(str_user)
     print(ans)
