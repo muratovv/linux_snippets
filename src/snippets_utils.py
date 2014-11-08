@@ -92,6 +92,11 @@ def convert_expanded_snippet_to_result(snippets, snippet):
     return None
 
 
+def convert_strs_to_snippet(label, description, text):
+    return {'label': label, 'description': description,
+            'text': convert_str_to_text(text)}
+
+
 def convert_str_to_text(s):
     result = []
 
@@ -106,6 +111,14 @@ def convert_str_to_text(s):
         index += 1
 
     return result
+
+
+def convert_snippet_to_strs(snippet):
+    l = snippet['label']
+    d = snippet['description']
+    t = convert_text_to_str(snippet['text'])
+
+    return l, d, t
 
 
 def convert_text_to_str(d):
