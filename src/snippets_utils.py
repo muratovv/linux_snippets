@@ -54,13 +54,13 @@ def get_expanded_snippet_by_label(snippets, label):
         if snippet["label"] == label:
             return get_expanded_snippet(snippet)
     else:
-        return ""
+        return None
 
 
 def get_expanded_snippet(snippet):
     result = snippet["label"] + " "
 
-    for item in snippet["snippetText"]:
+    for item in snippet["text"]:
         if type(item) == dict:
             result += separator + item["description"] + separator + " "
 
@@ -68,14 +68,14 @@ def get_expanded_snippet(snippet):
 
 
 def convert_expanded_snippet_to_result(snippets, snippet):
-    result = ""
     args = snippet.strip().split()
 
     for snippet in snippets:
         if snippet["label"] == args[0]:
+            result = ""
             arg_pos = 1
 
-            for item in snippet["snippetText"]:
+            for item in snippet["text"]:
                 if type(item) == str:
                     result += item
                 else:
@@ -85,5 +85,23 @@ def convert_expanded_snippet_to_result(snippets, snippet):
                         result += args[arg_pos]
 
                     arg_pos += 1
+
+            return result
+
+    return None
+
+
+def convert_dict_to_snippet(d):
+    result = {'label': d['label'], 'description': d['description'], 'text': []}
+
+    index = 0
+    for part in d['text'].split(separator):
+        if index % 2 == 0:
+            if len(part) != 0:
+                result['text'].append(part)
+        else:
+            if len(part) != 0:
+                result['text'].append(dict(description=part))
+        index += 1
 
     return result

@@ -79,7 +79,7 @@ class EditorWindow(Gtk.Window):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            s_u.update_or_append_snippet(dialog.get_data())
+            s_u.update_or_append_snippet(s_u.convert_dict_to_snippet(dialog.get_data()))
 
         dialog.destroy()
 
