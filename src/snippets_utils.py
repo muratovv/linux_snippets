@@ -3,7 +3,7 @@
 import json
 
 separator = '#'
-path = 'src/snippets'
+path = 'src/snippets.json'
 
 
 def load_snippets():
@@ -12,7 +12,7 @@ def load_snippets():
 
 def save_snippets(snippets):
     json.dump(snippets, open(path, "w", encoding="UTF-8"),
-              ensure_ascii=False)
+              ensure_ascii=False, indent=4, sort_keys=True)
 
 
 def update_or_append_snippet(snippet):
