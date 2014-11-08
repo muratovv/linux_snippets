@@ -114,15 +114,14 @@ class EditorWindow(Gtk.Window):
         model, pos = selection.get_selected()
 
         if pos is None:
+            self.label_entry.set_text("")
+            self.desc_entry.set_text("")
+            self.text_entry.set_text("")
             return True
 
         snippet = self.find_snippet(model[pos][0])
 
-        if snippet is None:
-            self.label_entry.set_text("")
-            self.desc_entry.set_text("")
-            self.text_entry.set_text("")
-        else:
+        if snippet is not None:
             self.label_entry.set_text(snippet['label'])
             self.desc_entry.set_text(snippet['description'])
             self.text_entry.set_text(s_u.convert_text_to_str(snippet['text']))

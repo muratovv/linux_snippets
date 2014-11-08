@@ -10,7 +10,7 @@ import pyperclip
 from gi.repository import Keybinder
 
 import src.snippets_window as sn_w
-import src.snippet_editor as sn_e
+import src.editor_window as e_w
 
 
 class Application():
@@ -44,7 +44,7 @@ class Application():
         self.status_icon.set_attention_icon("indicator-messages-new")
         self.status_icon.set_menu(menu)
 
-        self.editor = sn_e.EditorWindow()
+        self.editor = e_w.EditorWindow()
         self.editor.connect("delete-event", self.on_window_deleted)
 
         self.snippets = sn_w.SnippetsWindow(self.on_snippets_completed)
