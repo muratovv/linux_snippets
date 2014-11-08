@@ -1,5 +1,43 @@
 #! /usr/bin/env python3
 
+import json
+
+separator = '#'
+path = 'src/snippets'
+
+
+def load_snippets():
+    return json.load(open(path, "r"))
+
+
+def save_snippets(snippets):
+    json.dump(snippets, open(path, "w", encoding="UTF-8"),
+              ensure_ascii=False)
+
+
+def update_or_append_snippet(snippet):
+    snippets = load_snippets()
+
+    for s in snippets:
+        if s['label'] == snippet['label']:
+            s['description'] = snippet['description']
+            s['text'] = snippet['text']
+    else:
+        snippets.append(snippet)
+
+    save_snippets(snippets)
+
+
+def delete_snippet(label):
+    snippets = load_snippets()
+
+    for index in range(len(snippets)):
+        if snippets[index]["label"] == label:
+            del snippets[index]
+            break
+
+    save_snippets(snippets)
+
 
 def get_suggested_snippets(snippets, label_prefix):
     result = []
@@ -24,7 +62,7 @@ def get_expanded_snippet(snippet):
 
     for item in snippet["snippetText"]:
         if type(item) == dict:
-            result += "#" + item["description"] + "# "
+            result += separator + item["description"] + separator + " "
 
     return result.rstrip()
 
@@ -42,7 +80,7 @@ def convert_expanded_snippet_to_result(snippets, snippet):
                     result += item
                 else:
                     if arg_pos >= len(args):
-                        result += "#" + item["description"] + "#"
+                        result += separator + item["description"] + separator
                     else:
                         result += args[arg_pos]
 

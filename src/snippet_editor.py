@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk
 
-from src.snippetParser import SnippetParser
+import src.snippets_utils as s_u
 
 
 class EditorWindow(Gtk.Window):
@@ -17,24 +17,22 @@ class EditorWindow(Gtk.Window):
         grid.set_column_spacing(5)
         self.add(grid)
 
-        self.snippets = self.load_snippets()
+        self.model = Gtk.ListStore(str)
 
-        model = Gtk.ListStore(str)
-
-        for snippet in self.snippets:
-            model.append([snippet['label']])
+        for snippet in s_u.load_snippets():
+            self.model.append([snippet['label']])
 
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn("Label", renderer, text=0)
 
-        self.labels = Gtk.TreeView(model)
-        self.labels.append_column(column)
+        labels = Gtk.TreeView(self.model)
+        labels.append_column(column)
 
-        select = self.labels.get_selection()
+        select = labels.get_selection()
         select.connect("changed", self.on_label_selection)
 
         scroll = Gtk.ScrolledWindow()
-        scroll.add(self.labels)
+        scroll.add(labels)
 
         grid.attach(scroll, 0, 0, 2, 6)
 
@@ -43,6 +41,10 @@ class EditorWindow(Gtk.Window):
         self.text_entry = Gtk.Entry()
 
         self.label_entry.set_sensitive(False)
+
+        self.label_entry.set_size_request(300, 25)
+        self.desc_entry.set_size_request(300, 25)
+        self.text_entry.set_size_request(300, 25)
 
         grid.attach(Gtk.Label("Label"), 2, 0, 1, 1)
         grid.attach(self.label_entry, 2, 1, 1, 1)
@@ -65,14 +67,23 @@ class EditorWindow(Gtk.Window):
         grid.attach(delete_button, 1, 7, 1, 1)
         grid.attach(save_button, 2, 7, 1, 1)
 
-    def reload_snippets(self):
-        self.snippets = self.load_snippets()
+    def reload(self):
+        self.model.clear()
 
-    def load_snippets(self):
-        return SnippetParser("src/snippets").snippets
+        for snippet in s_u.load_snippets():
+            self.model.append([snippet['label']])
 
     def on_add_clicked(self, button):
-        print("add")
+        dialog = AddDialog(self)
+        dialog.show_all()
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            s_u.update_or_append_snippet(dialog.get_data())
+
+        dialog.destroy()
+
+        self.reload()
 
         return True
 
@@ -90,6 +101,43 @@ class EditorWindow(Gtk.Window):
         print("selection")
 
         return True
+
+
+class AddDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, "Add", parent, 0,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                             Gtk.STOCK_OK, Gtk.ResponseType.OK))
+
+        box = self.get_content_area()
+
+        grid = Gtk.Grid()
+        grid.set_border_width(5)
+        grid.set_row_spacing(5)
+        grid.set_column_spacing(5)
+
+        box.add(grid)
+
+        self.label_entry = Gtk.Entry()
+        self.desc_entry = Gtk.Entry()
+        self.text_entry = Gtk.Entry()
+
+        self.label_entry.set_size_request(300, 25)
+        self.desc_entry.set_size_request(300, 25)
+        self.text_entry.set_size_request(300, 25)
+
+        grid.attach(Gtk.Label("Label"), 0, 0, 1, 1)
+        grid.attach(self.label_entry, 0, 1, 1, 1)
+
+        grid.attach(Gtk.Label("Description"), 0, 2, 1, 1)
+        grid.attach(self.desc_entry, 0, 3, 1, 1)
+
+        grid.attach(Gtk.Label("Text"), 0, 4, 1, 1)
+        grid.attach(self.text_entry, 0, 5, 1, 1)
+
+    def get_data(self):
+        return {'label': self.label_entry.get_text(), 'description': self.desc_entry.get_text(),
+                'text': self.text_entry.get_text()}
 
 
 """

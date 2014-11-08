@@ -18,7 +18,7 @@ class Application():
         self.display = display.Display()
 
         Keybinder.init()
-        Keybinder.bind("<Ctrl>9", self.on_hotkey_activated)
+        Keybinder.bind("<Ctrl>9", self.on_snippets_activated)
 
         menu = Gtk.Menu()
 
@@ -50,15 +50,14 @@ class Application():
         self.snippets = sn_w.SnippetsWindow(self.on_snippets_completed)
         self.snippets.connect("delete-event", self.on_window_deleted)
 
-    def on_hotkey_activated(self, data):
+    def on_snippets_activated(self, data):
         self.cb_cache = pyperclip.paste()
         focus_request = self.display.get_input_focus()
         self.focus = focus_request.focus
 
         print("Hotkey pressed!")
 
-        self.snippets.clear()
-        self.snippets.reload_snippets()
+        self.snippets.reload()
         self.snippets.show_all()
         self.snippets.present_with_time(int(time.time()))
         self.snippets.set_keep_above(True)
@@ -99,6 +98,7 @@ class Application():
         return True
 
     def on_editor_activated(self, widget):
+        self.editor.reload()
         self.editor.show_all()
         self.editor.present_with_time(int(time.time()))
 
