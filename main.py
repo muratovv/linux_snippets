@@ -67,28 +67,29 @@ class Application():
     def on_snippets_completed(self, text):
         self.snippets.hide()
 
-        pyperclip.copy(text)
+        if text is not None:
+            pyperclip.copy(text)
 
-        keysym = XK.string_to_keysym('V')
-        keycode = self.display.keysym_to_keycode(keysym)
-        ev = protocol.event.KeyPress(
-            time=int(time.time()),
-            root=self.display.screen().root,
-            window=self.focus,
-            root_x=0,
-            root_y=0,
-            event_x=0,
-            event_y=0,
-            same_screen=0, child=X.NONE,
-            state=X.ControlMask,
-            detail=keycode
-        )
+            keysym = XK.string_to_keysym('V')
+            keycode = self.display.keysym_to_keycode(keysym)
+            ev = protocol.event.KeyPress(
+                time=int(time.time()),
+                root=self.display.screen().root,
+                window=self.focus,
+                root_x=0,
+                root_y=0,
+                event_x=0,
+                event_y=0,
+                same_screen=0, child=X.NONE,
+                state=X.ControlMask,
+                detail=keycode
+            )
 
-        self.display.send_event(self.focus, ev)
-        self.display.sync()
-        time.sleep(1)
+            self.display.send_event(self.focus, ev)
+            self.display.sync()
+            time.sleep(1)
 
-        pyperclip.copy(self.cb_cache)
+            pyperclip.copy(self.cb_cache)
 
         return True
 
