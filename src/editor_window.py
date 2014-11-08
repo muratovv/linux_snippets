@@ -68,8 +68,11 @@ class EditorWindow(Gtk.Window):
         grid.attach(save_button, 2, 7, 1, 1)
 
     def reload(self):
-        self.snippets = s_u.load_snippets()
+        self.reload_snippets()
         self.reload_model()
+
+    def reload_snippets(self):
+        self.snippets = s_u.load_snippets()
 
     def reload_model(self):
         self.model.clear()
@@ -106,7 +109,7 @@ class EditorWindow(Gtk.Window):
         snippet = {'label': self.label_entry.get_text(), 'description': self.desc_entry.get_text(),
                    'text': s_u.convert_str_to_text(self.text_entry.get_text())}
         s_u.update_or_append_snippet(snippet)
-        self.reload()
+        self.reload_snippets()
 
         return True
 
