@@ -22,9 +22,10 @@ def update_or_append_snippet(snippet):
         if s['label'] == snippet['label']:
             s['description'] = snippet['description']
             s['text'] = snippet['text']
-    else:
-        snippets.append(snippet)
+            save_snippets(snippets)
+            return
 
+    snippets.append(snippet)
     save_snippets(snippets)
 
 
