@@ -8,6 +8,7 @@ from gi.repository import Gtk
 from gi.repository import AppIndicator3
 import pyperclip
 from gi.repository import Keybinder
+import os
 
 import src.snippets_window as sn_w
 import src.editor_window as e_w
@@ -39,9 +40,10 @@ class Application():
             "onboard-mono",
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS
         )
+        self.status_icon.set_icon_theme_path(os.getcwd()+"/res/")
+        self.status_icon.set_icon("icon")
 
         self.status_icon.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        self.status_icon.set_attention_icon("indicator-messages-new")
         self.status_icon.set_menu(menu)
 
         self.editor = e_w.EditorWindow()
