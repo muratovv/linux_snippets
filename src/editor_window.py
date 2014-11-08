@@ -122,12 +122,21 @@ class EditorWindow(Gtk.Window):
         return True
 
     def on_save_clicked(self, button):
-        s_u.update_or_append_snippet(
-            s_u.convert_strs_to_snippet(self.label_entry.get_text(), self.desc_entry.get_text(),
-                                        self.text_entry.get_text())
-        )
+        label = self.label_entry.get_text()
+        text = self.text_entry.get_text()
 
-        # TODO check
+        if len(text) == 0:
+            self.invalid_snippet_dialog()
+            self.text_entry.set_text(
+                s_u.convert_text_to_str(self.find_snippet(label)['text'])
+            )
+
+            return True
+
+        s_u.update_or_append_snippet(
+            s_u.convert_strs_to_snippet(label, self.desc_entry.get_text(),
+                                        text)
+        )
 
         self.reload_snippets()
 
