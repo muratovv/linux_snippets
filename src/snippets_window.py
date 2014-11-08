@@ -8,7 +8,7 @@ import src.snippets_utils as s_u
 
 class SnippetsWindow(Gtk.Window):
     def __init__(self, callback=None):
-        Gtk.Window.__init__(self, title="Snippets")
+        Gtk.Window.__init__(self, title='Snippets')
 
         self.snippets = s_u.load_snippets()
 
@@ -22,7 +22,7 @@ class SnippetsWindow(Gtk.Window):
         self.add(self.entry)
 
     def reload(self):
-        self.entry.set_text("")
+        self.entry.set_text('')
         self.snippets = s_u.load_snippets()
 
     def calculate_completion(self, on_selected):
@@ -36,7 +36,7 @@ class SnippetsWindow(Gtk.Window):
         completion.pack_start(desc_cell, True)
         completion.add_attribute(desc_cell, 'text', 1)
 
-        completion.connect("match-selected", on_selected)
+        completion.connect('match-selected', on_selected)
 
         return completion
 
@@ -46,10 +46,10 @@ class SnippetsWindow(Gtk.Window):
         entry.set_completion(completion)
         entry.set_width_chars(75)
 
-        entry.connect("changed", on_changed)
-        entry.connect("key-press-event", on_tab_pressed)
-        entry.connect("key-release-event", on_tab_released)
-        entry.connect("activate", on_activated)
+        entry.connect('changed', on_changed)
+        entry.connect('key-press-event', on_tab_pressed)
+        entry.connect('key-release-event', on_tab_released)
+        entry.connect('activate', on_activated)
 
         return entry
 
@@ -67,7 +67,7 @@ class SnippetsWindow(Gtk.Window):
 
         if l != -1:
             r = expanded_snippet.find(s_u.separator, l + 1) + 1
-            self.entry.select_region(l, r)
+            self.entry.select_region(l + 1, r - 1)
 
     def on_entry_text_changed(self, entry):
         model = Gtk.ListStore(str, str)
@@ -88,11 +88,11 @@ class SnippetsWindow(Gtk.Window):
         if event.keyval == Gdk.KEY_Tab:
             text = entry.get_text()
 
-            l = text.find(s_u.separator, entry.get_position())
+            l = text.find(s_u.separator, entry.get_position() + 1)
 
             if l != -1:
                 r = text.find(s_u.separator, l + 1) + 1
-                entry.select_region(l, r)
+                entry.select_region(l + 1, r - 1)
                 return True
 
             suggested_snippets = s_u.get_suggested_snippets(self.snippets, text)
@@ -114,6 +114,6 @@ class SnippetsWindow(Gtk.Window):
 
 if __name__ == '__main__':
     window = SnippetsWindow()
-    window.connect("delete-event", Gtk.main_quit)
+    window.connect('delete-event', Gtk.main_quit)
     window.show_all()
     Gtk.main()
