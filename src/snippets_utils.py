@@ -91,17 +91,29 @@ def convert_expanded_snippet_to_result(snippets, snippet):
     return None
 
 
-def convert_dict_to_snippet(d):
-    result = {'label': d['label'], 'description': d['description'], 'text': []}
+def convert_str_to_text(s):
+    result = []
 
     index = 0
-    for part in d['text'].split(separator):
+    for part in s.split(separator):
         if index % 2 == 0:
             if len(part) != 0:
-                result['text'].append(part)
+                result.append(part)
         else:
             if len(part) != 0:
-                result['text'].append(dict(description=part))
+                result.append(dict(description=part))
         index += 1
+
+    return result
+
+
+def convert_text_to_str(d):
+    result = ""
+
+    for part in d:
+        if type(part) is dict:
+            result += '#' + part["description"] + "#"
+        else:
+            result += str(part)
 
     return result
