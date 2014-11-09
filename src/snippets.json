@@ -1,0 +1,54 @@
+[
+    {
+        "description": "Тема для письма",
+        "label": "python",
+        "text": [
+            "Python homework ",
+            {
+                "description": "Фамилия"
+            },
+            " task0",
+            {
+                "description": "Номер"
+            }
+        ]
+    },
+    {
+        "description": "Тема для письма",
+        "label": "knop",
+        "text": [
+            {
+                "description": "Имя Фамилия"
+            },
+            " домашнее задание DM-MAU ",
+            {
+                "description": "Дата, когда задано"
+            }
+        ]
+    },
+    {
+        "description": "Приветствие пользователю",
+        "label": "hello",
+        "text": [
+            "Привет, ",
+            {
+                "description": "1"
+            },
+            "!"
+        ]
+    },
+    {
+        "description": "Тема для письма",
+        "label": "python-cw",
+        "text": [
+            "Python homework ",
+            {
+                "description": "Фамилия"
+            },
+            " Test0",
+            {
+                "description": "Номер"
+            }
+        ]
+    }
+]
